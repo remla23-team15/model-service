@@ -4,12 +4,14 @@ import pickle
 import joblib
 from flasgger import Swagger
 from flask import Flask, request
+from flask_cors import CORS
 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(name)s : %(message)s")
 log = logging.getLogger(__name__)
 
 app = Flask(__name__)
 swagger = Swagger(app)
+CORS(app)
 
 
 @app.route("/", methods=["GET"])

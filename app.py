@@ -18,8 +18,9 @@ CORS(app)
 positive_predictions = 0
 negative_predictions = 0
 total_predictions = 0
-model_accuracy = 0
-prediction_duration = 0
+correct_predictions = 0
+model_accuracy = 0.0
+prediction_duration = 0.0
 
 
 @app.route("/", methods=["GET"])
@@ -62,7 +63,7 @@ def predict():
         description: The result of the classification, 'positive' or 'negative'
     """
 
-    global positive_predictions, negative_predictions, total_predictions, model_accuracy, prediction_duration
+    global positive_predictions, negative_predictions, total_predictions, prediction_duration
 
     # Track execution time
     start_time = time.time()
@@ -82,23 +83,22 @@ def predict():
     processed_input = cv.transform([restaurant_review]).toarray()[0]
     prediction = classifier.predict([processed_input])[0]
 
-    prediction_map = {
-        0: "negative",
-        1: "positive",
-    }
-
     # Update metrics
-    if prediction_map[prediction]:
+    if prediction:
         positive_predictions += 1
     else:
         negative_predictions += 1
 
     total_predictions = positive_predictions + negative_predictions
-    model_accuracy = negative_predictions / positive_predictions
 
-    prediction_duration = round(time.time() - start_time, 2)
+    prediction_duration = round(time.time() - start_time, 4)
 
     # Return result
+    prediction_map = {
+        0: "negative",
+        1: "positive",
+    }
+
     res = {
         "result": prediction_map[prediction],
         "classifier": "GaussianNB",
@@ -108,6 +108,54 @@ def predict():
     log.info(res)
 
     return res
+
+
+@app.route("/feedback", methods=["POST"])
+def feedback():
+    """
+    Provide feedback on a received prediction of the provided review.
+    ---
+    consumes:
+      - application/json
+    parameters:
+        - name: input_data
+          in: body
+          description: review feedback.
+          required: True
+          schema:
+            type: object
+            required: feedback
+            properties:
+                feedback:
+                    type: int
+                    example: 0
+    responses:
+      200:
+        description: The result the request.
+    """
+    global total_predictions, correct_predictions, model_accuracy
+
+    # Get data from request
+    input_data = request.get_json()
+    prediction_feedback = input_data.get("feedback")
+
+    # Update the metrics
+    log.info("Update model accuracy with given feedback...")
+
+    if prediction_feedback:
+        correct_predictions += 1
+
+    # Avoid division by 0
+    if total_predictions == 0:
+        return Response("You must perform a prediction first before giving feedback!", status=400)
+
+    model_accuracy = round(correct_predictions / total_predictions, 2)
+
+    log.info(f"Model accuracy = {model_accuracy}")
+
+    return {
+        "model_accuracy": model_accuracy
+    }
 
 
 @app.route("/metrics", methods=["GET"])
@@ -120,7 +168,8 @@ def metrics():
         description: The Prometheus metrics in text format
     """
 
-    global positive_predictions, negative_predictions, total_predictions, model_accuracy, prediction_duration
+    global positive_predictions, negative_predictions, total_predictions, \
+        model_accuracy, prediction_duration, correct_predictions
 
     prometheus_metrics = "# HELP positive_predictions Total positive predictions.\n"
     prometheus_metrics += "# TYPE positive_predictions counter\n"
@@ -133,6 +182,10 @@ def metrics():
     prometheus_metrics += "# HELP total_predictions Total predictions.\n"
     prometheus_metrics += "# TYPE total_predictions counter\n"
     prometheus_metrics += f"total_predictions {total_predictions}\n\n"
+
+    prometheus_metrics += "# HELP correct_predictions Total correct predictions based on feedback.\n"
+    prometheus_metrics += "# TYPE correct_predictions counter\n"
+    prometheus_metrics += f"correct_predictions {correct_predictions}\n\n"
 
     prometheus_metrics += "# HELP model_accuracy The predictions accuracy.\n"
     prometheus_metrics += "# TYPE model_accuracy gauge\n"

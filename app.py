@@ -1,3 +1,4 @@
+""" app.py """
 import logging
 import pickle
 import time
@@ -15,12 +16,12 @@ swagger = Swagger(app)
 CORS(app)
 
 # Prometheus metrics
-positive_predictions = 0
-negative_predictions = 0
-total_predictions = 0
-correct_predictions = 0
-model_accuracy = 0.0
-prediction_duration = 0.0
+POSITIVE_PREDICTIONS = 0
+NEGATIVE_PREDICTIONS = 0
+TOTAL_PREDICTIONS = 0
+CORRECT_PREDICTIONS = 0
+MODEL_ACCURACY = 0.0
+PREDICTION_DURATION = 0.0
 
 
 @app.route("/", methods=["GET"])
@@ -63,7 +64,7 @@ def predict():
         description: The result of the classification, 'positive' or 'negative'
     """
 
-    global positive_predictions, negative_predictions, total_predictions, prediction_duration
+    global POSITIVE_PREDICTIONS, NEGATIVE_PREDICTIONS, TOTAL_PREDICTIONS, PREDICTION_DURATION
 
     # Track execution time
     start_time = time.time()
@@ -85,13 +86,13 @@ def predict():
 
     # Update metrics
     if prediction:
-        positive_predictions += 1
+        POSITIVE_PREDICTIONS += 1
     else:
-        negative_predictions += 1
+        NEGATIVE_PREDICTIONS += 1
 
-    total_predictions = positive_predictions + negative_predictions
+    TOTAL_PREDICTIONS = POSITIVE_PREDICTIONS + NEGATIVE_PREDICTIONS
 
-    prediction_duration = round(time.time() - start_time, 4)
+    PREDICTION_DURATION = round(time.time() - start_time, 4)
 
     # Return result
     prediction_map = {
@@ -133,7 +134,7 @@ def feedback():
       200:
         description: The result the request.
     """
-    global total_predictions, correct_predictions, model_accuracy
+    global TOTAL_PREDICTIONS, CORRECT_PREDICTIONS, MODEL_ACCURACY
 
     # Get data from request
     input_data = request.get_json()
@@ -143,18 +144,18 @@ def feedback():
     log.info("Update model accuracy with given feedback...")
 
     if prediction_feedback:
-        correct_predictions += 1
+        CORRECT_PREDICTIONS += 1
 
     # Avoid division by 0
-    if total_predictions == 0:
+    if TOTAL_PREDICTIONS == 0:
         return Response("You must perform a prediction first before giving feedback!", status=400)
 
-    model_accuracy = round(correct_predictions / total_predictions, 2)
+    MODEL_ACCURACY = round(CORRECT_PREDICTIONS / TOTAL_PREDICTIONS, 2)
 
-    log.info(f"Model accuracy = {model_accuracy}")
+    log.info(f"Model accuracy = {MODEL_ACCURACY}")
 
     return {
-        "model_accuracy": model_accuracy
+        "model_accuracy": MODEL_ACCURACY
     }
 
 
@@ -168,32 +169,33 @@ def metrics():
         description: The Prometheus metrics in text format
     """
 
-    global positive_predictions, negative_predictions, total_predictions, \
-        model_accuracy, prediction_duration, correct_predictions
+    global POSITIVE_PREDICTIONS, NEGATIVE_PREDICTIONS, TOTAL_PREDICTIONS, \
+        MODEL_ACCURACY, PREDICTION_DURATION, CORRECT_PREDICTIONS
 
     prometheus_metrics = "# HELP positive_predictions Total positive predictions.\n"
     prometheus_metrics += "# TYPE positive_predictions counter\n"
-    prometheus_metrics += f"positive_predictions {positive_predictions}\n\n"
+    prometheus_metrics += f"positive_predictions {POSITIVE_PREDICTIONS}\n\n"
 
     prometheus_metrics += "# HELP negative_predictions Total negative predictions.\n"
     prometheus_metrics += "# TYPE negative_predictions counter\n"
-    prometheus_metrics += f"negative_predictions {negative_predictions}\n\n"
+    prometheus_metrics += f"negative_predictions {NEGATIVE_PREDICTIONS}\n\n"
 
     prometheus_metrics += "# HELP total_predictions Total predictions.\n"
     prometheus_metrics += "# TYPE total_predictions counter\n"
-    prometheus_metrics += f"total_predictions {total_predictions}\n\n"
+    prometheus_metrics += f"total_predictions {TOTAL_PREDICTIONS}\n\n"
 
-    prometheus_metrics += "# HELP correct_predictions Total correct predictions based on feedback.\n"
+    prometheus_metrics += "# HELP correct_predictions Total correct predictions " \
+        "based on feedback.\n"
     prometheus_metrics += "# TYPE correct_predictions counter\n"
-    prometheus_metrics += f"correct_predictions {correct_predictions}\n\n"
+    prometheus_metrics += f"correct_predictions {CORRECT_PREDICTIONS}\n\n"
 
     prometheus_metrics += "# HELP model_accuracy The predictions accuracy.\n"
     prometheus_metrics += "# TYPE model_accuracy gauge\n"
-    prometheus_metrics += f"model_accuracy {model_accuracy}\n\n"
+    prometheus_metrics += f"model_accuracy {MODEL_ACCURACY}\n\n"
 
     prometheus_metrics += "# HELP prediction_duration The predictions durtion in seconds.\n"
     prometheus_metrics += "# TYPE prediction_duration histogram\n"
-    prometheus_metrics += f"prediction_duration {prediction_duration}\n"
+    prometheus_metrics += f"prediction_duration {PREDICTION_DURATION}\n"
 
     return Response(prometheus_metrics, mimetype="text/plain")
 

@@ -24,7 +24,9 @@ MODEL_ACCURACY = 0.0
 PREDICTION_DURATION = 0.0
 
 
-def camelCaseFunctionToTestPylint(): 
+
+
+def camelCaseFunction(): 
     return -1 
 
 

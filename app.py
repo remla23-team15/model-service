@@ -26,7 +26,7 @@ PREDICTION_DURATION = 0.0
 
 
 
-def camelCaseFunction(): 
+def camelCaseFunction()
     return -1 
 
 

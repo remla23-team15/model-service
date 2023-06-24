@@ -24,6 +24,10 @@ MODEL_ACCURACY = 0.0
 PREDICTION_DURATION = 0.0
 
 
+def camelCaseFunctionToTestPylint(): 
+    return -1 
+
+
 @app.route("/", methods=["GET"])
 def home():
     """

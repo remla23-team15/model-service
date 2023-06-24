@@ -26,8 +26,8 @@ PREDICTION_DURATION = 0.0
 
 
 
-def camelCaseFunction()
-    return -1 
+def camelCaseFunction(test) 
+    return -1 :
 
 
 @app.route("/", methods=["GET"])

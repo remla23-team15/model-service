@@ -1,4 +1,4 @@
-name: Pylint
+name: Lint
 
 # Trigger when branches are pushed
 on: [push]
@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -40,3 +40,4 @@ jobs:
         uses: wearerequired/lint-action@v2
         with:
           pylint: true
+          pylint_args: "app.py"

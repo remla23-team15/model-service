@@ -1,17 +1,13 @@
-name: Lint
+name: Pylint
 
 # Trigger when branches are pushed
 on: [push]
 
-permissions:
-  checks: write
-  contents: write
-
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # Set Python version
       - name: Setup Python
@@ -36,7 +32,5 @@ jobs:
           pip install -r requirements-ci.txt
 
       # Pylint
-      - name: Run pylint
-        uses: wearerequired/lint-action@v2
-        with:
-          pylint: true
+      - name: Pylint
+        run: pylint app.py

@@ -1,4 +1,4 @@
 -r requirements.txt
 
-pylint==2.13.0
+pylint==2.12.2
 dslinter==2.0.9

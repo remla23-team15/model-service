@@ -24,12 +24,6 @@ MODEL_ACCURACY = 0.0
 PREDICTION_DURATION = 0.0
 
 
-
-
-def camelCaseFunction(test) : 
-    return -1 
-
-
 @app.route("/", methods=["GET"])
 def home():
     """
@@ -81,7 +75,7 @@ def predict():
 
     # Load pickle
     log.info("Loading BoW dictionary...")
-    cv = pickle.load(open(f"ml_models/c1_BoW_Sentiment_Model.pkl", "rb"))
+    cv = pickle.load(open("ml_models/c1_BoW_Sentiment_Model.pkl", "rb"))
 
     # Perform predictions
     log.info("Predictions (via sentiment classifier)...")
@@ -140,7 +134,7 @@ def feedback():
       200:
         description: The result the request.
     """
-    global TOTAL_PREDICTIONS, CORRECT_PREDICTIONS, MODEL_ACCURACY
+    global CORRECT_PREDICTIONS, MODEL_ACCURACY
 
     # Get data from request
     input_data = request.get_json()
@@ -158,7 +152,7 @@ def feedback():
 
     MODEL_ACCURACY = round(CORRECT_PREDICTIONS / TOTAL_PREDICTIONS, 2)
 
-    log.info(f"Model accuracy = {MODEL_ACCURACY}")
+    log.info("Model accuracy = %s", MODEL_ACCURACY)
 
     return {
         "model_accuracy": MODEL_ACCURACY
@@ -174,9 +168,6 @@ def metrics():
       200:
         description: The Prometheus metrics in text format
     """
-
-    global POSITIVE_PREDICTIONS, NEGATIVE_PREDICTIONS, TOTAL_PREDICTIONS, \
-        MODEL_ACCURACY, PREDICTION_DURATION, CORRECT_PREDICTIONS
 
     prometheus_metrics = "# HELP positive_predictions Total positive predictions.\n"
     prometheus_metrics += "# TYPE positive_predictions counter\n"

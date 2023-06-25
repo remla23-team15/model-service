@@ -5,3 +5,5 @@ flasgger==0.9.5
 joblib==1.2.0
 scikit-learn==1.2.2
 flask-cors==3.0.10
+pyncclient==0.7
+remla-lib @ git+https://github.com/remla23-team15/lib@main

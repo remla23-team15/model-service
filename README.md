@@ -29,7 +29,12 @@ pip install -r requirements.txt
 ```
 
 #### Get The ML Models
-For local testing, make sure to get the models from the repository https://github.com/remla23-team15/model-training stored in the folder `ml_models` and add them to a folder with the same name (`ml_models`) in this project.
+Move to  the application folder and run in your terminal:
+```
+python get_ml_models.py
+```
+
+In case of problems, you can get the models from the repository https://github.com/remla23-team15/model-training stored in the folder `ml_models` and add them to a folder with the same name (`ml_models`) in this project.
 
 #### Run
 Move to  the application folder and run in your terminal:

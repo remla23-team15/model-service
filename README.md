@@ -34,7 +34,12 @@ Move to  the application folder and run in your terminal:
 python get_ml_models.py
 ```
 
-In case of problems, you can get the models from the repository https://github.com/remla23-team15/model-training stored in the folder `ml_models` and add them to a folder with the same name (`ml_models`) in this project.
+In case of problems, you can get the models from:
+- The models repository https://liv.nl.tab.digital/s/TyPqR5HCjExqNQq
+- The repository https://github.com/remla23-team15/model-training stored in the folder `ml_models`. 
+
+
+Once downloaded, add them to a folder named `ml_models` in this project.
 
 #### Run
 Move to  the application folder and run in your terminal:
@@ -45,6 +50,16 @@ python app.py
 The script will start a Flask server accessible at http://localhost:8080.
 
 To access the Swagger API documentation, go to http://localhost:8080/apidocs.
+
+#### Lint
+To ass the code quality using PyLint, execute the following commands:
+``` 
+# Install CI requirements 
+pip install -r requirements-ci.txt
+
+# Execute pylint on the application files
+pylint app.py get_ml_models.py
+```
 
 ## Docker
 To build and run a Docker image of the application, you can open the terminal (in the application folder) and run:

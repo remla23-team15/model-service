@@ -1,5 +1,9 @@
 *venv
+.github
 ml_models
 Dockerfile
+.dockerignore
 .gitignore
 README.md
+pylintrc
+requirements-ci.txt

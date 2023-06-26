@@ -8,6 +8,8 @@ from flasgger import Swagger
 from flask import Flask, request, Response
 from flask_cors import CORS
 
+from get_ml_models import get_ml_models
+
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(name)s : %(message)s")
 log = logging.getLogger(__name__)
 
@@ -33,11 +35,31 @@ def home():
       - application/json
     responses:
       200:
-        description: Some result
+        description: Default message.
     """
     return {
         "result": "Please use the /predict endpoint to predict the sentiment of a review text!",
     }
+
+
+@app.route("/update", methods=["GET"])
+def update():
+    """
+    Update the ML models based on the latest version.
+    ---
+    consumes:
+      - application/json
+    responses:
+      200:
+        description: Success.
+    """
+
+    success, response_message = get_ml_models()
+
+    if not success:
+        return Response(response_message, status=400)
+
+    return Response(response_message, status=200)
 
 
 @app.route("/predict", methods=["POST"])

@@ -33,4 +33,4 @@ jobs:
 
       # Pylint
       - name: Pylint
-        run: pylint app.py
+        run: pylint app.py get_ml_models.py

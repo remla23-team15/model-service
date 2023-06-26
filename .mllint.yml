@@ -1,0 +1,7 @@
+rules:
+    disabled:
+        - version-control/data
+        - testing
+code-quality:
+    linters:
+        - pylint

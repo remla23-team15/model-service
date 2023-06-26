@@ -52,7 +52,7 @@ The script will start a Flask server accessible at http://localhost:8080.
 To access the Swagger API documentation, go to http://localhost:8080/apidocs.
 
 #### Lint
-To ass the code quality using PyLint, execute the following commands:
+To assess the code quality using PyLint with dslinter plugin, execute the following commands:
 ``` 
 # Install CI requirements 
 pip install -r requirements-ci.txt
